@@ -9,6 +9,14 @@ import calendar
 import zipfile
 import io
 st.set_page_config(page_title="Suporte Smart - Enterprise", layout="wide", initial_sidebar_state="expanded")
+st.markdown("""
+    <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        .viewerBadge_container {display: none !important;}
+        [data-testid="stStatusWidget"] {display: none !important;}
+    </style>
+    """, unsafe_allow_html=True)
 from supabase import create_client, Client
 
 # ==========================================
