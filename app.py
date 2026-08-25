@@ -11,10 +11,25 @@ import io
 st.set_page_config(page_title="Suporte Smart - Enterprise", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
     <style>
+        /* 1. Esconder menu superior e rodapé */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        .viewerBadge_container {display: none !important;}
-        [data-testid="stStatusWidget"] {display: none !important;}
+        
+        /* 2. Transformar o emblema da Streamlit num fantasma (invisível e sem clique) */
+        [class^="viewerBadge"] {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -9999 !important;
+        }
+        
+        /* 3. Bloquear o clique e a visão de qualquer link da plataforma */
+        a[href*="streamlit.io"] {
+            display: none !important;
+            pointer-events: none !important;
+            opacity: 0 !important;
+            cursor: default !important;
+        }
     </style>
     """, unsafe_allow_html=True)
 from supabase import create_client, Client
