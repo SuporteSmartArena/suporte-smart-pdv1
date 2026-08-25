@@ -180,7 +180,7 @@ if not st.session_state.autenticado:
             caminho_completo = os.path.join(pasta_do_projeto, nome_tentativa)
             if os.path.exists(caminho_completo):
                 c_esq, c_cen, c_dir = st.columns([1, 2, 1])
-                with c_cen: st.image(caminho_completo, use_container_width=True)
+                with c_cen: st.image(caminho_completo, use_column_width=True)
                 logo_encontrada = True; break
         if not logo_encontrada: st.markdown("<h1 style='text-align: center; color: #ffffff;'>📱 SUPORTE SMART</h1>", unsafe_allow_html=True)
         st.markdown("<div style='text-align: center; color: #a0aec0; font-size: 15px; margin-bottom: 25px; font-weight: bold;'>ACESSO AO SISTEMA NUVEM</div>", unsafe_allow_html=True)
