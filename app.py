@@ -11,7 +11,12 @@ import io
 from supabase import create_client, Client
 
 # ==========================================
-# 1. CONEXÃO SUPABASE E ESTADO (RESILIENTE)
+# 1. CONFIGURAÇÃO DA PÁGINA (DEVE SER O 1º COMANDO!)
+# ==========================================
+st.set_page_config(page_title="Suporte Smart - Enterprise", layout="wide", initial_sidebar_state="expanded")
+
+# ==========================================
+# 2. CONEXÃO SUPABASE E ESTADO (RESILIENTE)
 # ==========================================
 SUPABASE_URL = "https://gtpsbwrzprrabsqgmlim.supabase.co"
 SUPABASE_KEY = "sb_publishable_JUOMceD80qpiR5QFhtA-HA_OANfJpU8"
@@ -22,7 +27,7 @@ def init_connection():
 
 supabase = init_connection()
 
-st.set_page_config(page_title="Suporte Smart - Enterprise", layout="wide", initial_sidebar_state="expanded")
+if 'autenticado' not in st.session_state:
 
 if 'autenticado' not in st.session_state:
     st.session_state.autenticado = False; st.session_state.perfil = None; st.session_state.usuario_nome = None
