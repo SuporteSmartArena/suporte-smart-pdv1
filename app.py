@@ -11,7 +11,7 @@ import io
 from supabase import create_client, Client
 
 # ==========================================
-# 1. CONFIGURAÇÃO DA PÁGINA (DEVE SER O 1º COMANDO!)
+# 1. CONFIGURAÇÃO DA PÁGINA (1º COMANDO OBRIGATÓRIO)
 # ==========================================
 st.set_page_config(page_title="Suporte Smart - Enterprise", layout="wide", initial_sidebar_state="expanded")
 
@@ -26,8 +26,6 @@ def init_connection():
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 supabase = init_connection()
-
-if 'autenticado' not in st.session_state:
 
 if 'autenticado' not in st.session_state:
     st.session_state.autenticado = False; st.session_state.perfil = None; st.session_state.usuario_nome = None
@@ -107,7 +105,6 @@ def carregar_financeiro():
     cr = fetch_df('contas_receber', ['id', 'origem_cliente', 'descricao', 'vencimento', 'valor', 'data_pagamento', 'status', 'conta_destino'])
     cr.rename(columns={'id':'ID', 'origem_cliente':'Origem_Cliente', 'descricao':'Descricao', 'vencimento':'Vencimento', 'valor':'Valor', 'data_pagamento':'Data_Pagamento', 'status':'Status', 'conta_destino':'Conta_Destino'}, inplace=True)
     
-    # MÁQUINA: Puxa o financeiro completo para DRE, mas limitaremos a renderização visual depois
     mov = fetch_df('movimentacoes', ['id', 'tipo', 'descricao', 'valor', 'data', 'categoria', 'conta', 'status'])
     mov.rename(columns={'id':'ID', 'tipo':'Tipo', 'descricao':'Descricao', 'valor':'Valor', 'data':'Data', 'categoria':'Categoria', 'conta':'Conta', 'status':'Status'}, inplace=True)
     return b, cp, cr, mov
@@ -253,7 +250,6 @@ if st.session_state.menu_selecionado == "CLIENTES":
     with aba_list_cli:
         st.markdown("<div style='margin-top:0; margin-bottom: 20px; font-weight: bold; font-size: 16px; text-transform: uppercase;'>📋 Clientes Registrados</div>", unsafe_allow_html=True)
         df_clientes = carregar_clientes()
-        # MÁQUINA: Renderiza apenas os 500 mais recentes para evitar lentidão no browser
         if not df_clientes.empty: st.dataframe(df_clientes[['ID', 'Nome', 'Telefone', 'CPF', 'Endereco', 'DataCadastro']].copy().tail(500), use_container_width=True, hide_index=True)
         else: st.info("Nenhum cliente cadastrado ainda.")
             
@@ -271,7 +267,7 @@ if st.session_state.menu_selecionado == "CLIENTES":
                 e_end = st.text_input("Endereço", str(cli_dados.get('Endereco', '')))
                 st.markdown("<hr><b>Diário do Cliente (Histórico Acumulativo)</b>", unsafe_allow_html=True)
                 historico_atual = str(cli_dados.get('Historico', ''))
-                novo_historico = st.text_area("Adicionar Nova Observação (Ficará no topo do histórico):")
+                novo_historico = st.text_area("Adicionar Nova Observação:")
                 st.markdown("<b>Histórico Passado / Registos de Vendas:</b>", unsafe_allow_html=True)
                 st.info(historico_atual if historico_atual.strip() and historico_atual != "nan" else "Sem histórico anterior.")
                 
@@ -595,7 +591,6 @@ elif st.session_state.menu_selecionado == "VENDAS":
 
             col_esq, col_dir = st.columns([1.2, 1], gap="large")
             with col_esq:
-                # MÁQUINA: Reorganização inteligente - Selecionar o Aparelho primeiro e Pagamento depois
                 c_tit, c_limpar = st.columns([3, 1])
                 c_tit.markdown("<div style='font-weight: bold; font-size: 18px; text-transform: uppercase; color: #a0aec0;'>👤 1. Cliente e Aparelho</div>", unsafe_allow_html=True)
                 if c_limpar.button("🧹 Limpar Venda", use_container_width=True): resetar_pdv(); st.rerun()
@@ -816,7 +811,7 @@ elif st.session_state.menu_selecionado == "VENDAS":
                         else:
                             try:
                                 itens_venda = []
-                                if tem_celular: itens_venda.append({"tipo": "CELULAR", "nome": f"{row_ap['Marca']} {row_ap['Modelo']} ({row_ap['IMEI']})", "imei": row_ap['IMEI'], "id_estoque": row_ap['ID'], "preco": preco_venda_aparelho, "custo": custo_aparelho, "qtd": 1, "subtotal": preco_venda_aparelho, "subcusto": custo_aparelho})
+                                if tem_celular: itens_venda.append({"tipo": "CELULAR", "nome": f"{dados_prod['Marca']} {dados_prod['Modelo']} ({dados_prod['IMEI']})", "imei": dados_prod['IMEI'], "id_estoque": dados_prod['ID'], "preco": preco_venda_aparelho, "custo": custo_aparelho, "qtd": 1, "subtotal": preco_venda_aparelho, "subcusto": custo_aparelho})
                                 itens_venda.extend(st.session_state.acessorios)
                                 nomes_produtos = []
                                 
@@ -1222,7 +1217,6 @@ elif st.session_state.menu_selecionado == "FATURAMENTO":
         st.markdown("<div style='font-weight: bold; font-size: 16px; text-transform: uppercase; margin-bottom: 15px; margin-top: 10px;'>📄 Extrato Bancário da Loja (Movimentações Reais)</div>", unsafe_allow_html=True)
         if not df_mov.empty:
             html = "<table class='tabela-leve'><tr><th>ID</th><th>Data</th><th>Tipo</th><th>Descrição</th><th>Conta</th><th>Valor</th></tr>"
-            # MÁQUINA: Renderiza apenas as últimas 200 movimentações para não explodir a tela
             for index, row in df_mov.tail(200).iloc[::-1].iterrows():
                 data_str = str(row['Data']).split(" ")[0] if pd.notna(row['Data']) else "-"
                 desc_completa = str(row['Descricao']) if pd.notna(row['Descricao']) else ""
