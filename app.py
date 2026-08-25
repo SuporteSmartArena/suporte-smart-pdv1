@@ -8,6 +8,7 @@ import streamlit.components.v1 as components
 import calendar
 import zipfile
 import io
+st.set_page_config(page_title="Suporte Smart - Enterprise", layout="wide", initial_sidebar_state="expanded")
 from supabase import create_client, Client
 
 # ==========================================
@@ -21,8 +22,6 @@ def init_connection():
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 supabase = init_connection()
-
-st.set_page_config(page_title="Suporte Smart - Enterprise", layout="wide", initial_sidebar_state="expanded")
 
 if 'autenticado' not in st.session_state:
     st.session_state.autenticado = False; st.session_state.perfil = None; st.session_state.usuario_nome = None
